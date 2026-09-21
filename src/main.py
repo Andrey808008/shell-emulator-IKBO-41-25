@@ -4,7 +4,7 @@ import tkinter as tk
 from tkinter import scrolledtext
 
 
-#Парсер команды
+"""Парсер команды"""
 def parse_command(line: str) -> tuple[str, list[str]]:
     parts = line.strip().split()
     if not parts:
@@ -12,7 +12,7 @@ def parse_command(line: str) -> tuple[str, list[str]]:
     return parts[0], parts[1:]
 
 
-#Обработчики команд
+"""Обработчики команд"""
 def handle_ls(args: list[str]) -> str:
     return f"Выполнена команда: ls, аргументы: {args}"
 
@@ -20,7 +20,7 @@ def handle_cd(args: list[str]) -> str:
     return f"Выполнена команда: cd, аргументы: {args}"
 
 
-#Приложение
+"""Приложение"""
 class ShellApp:
     COMMANDS = {
         "ls": handle_ls,
@@ -30,7 +30,7 @@ class ShellApp:
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
 
-        #заголовок
+        """заголовок"""
         username = getpass.getuser()
         hostname = socket.gethostname()
         self.root.title(f"Эмулятор - [{username}@{hostname}]")
