@@ -8,6 +8,7 @@ from tkinter import scrolledtext
 
 from src.commands import COMMANDS
 from src.parser import parse_command
+from src.logger import Logger
 
 
 class ShellApp:
@@ -16,6 +17,7 @@ class ShellApp:
 
         self.root = root
         self.args = args
+        self.logger = Logger(args.log)
 
         username = getpass.getuser()
         hostname = socket.gethostname()
@@ -44,7 +46,7 @@ class ShellApp:
         self.output.configure(state=tk.DISABLED)
 
     def on_enter(self, event: tk.Event) -> None:
-        """Обрабатывает нажатие Enter в поле ввода"""
+        """Обрабатывает нажатие Enter в поле ввода."""
         line = self.entry.get()
         self.entry.delete(0, tk.END)
 
@@ -56,13 +58,17 @@ class ShellApp:
         command, args = parse_command(line)
 
         if command == "exit":
+            self.logger.log(line)
             self.root.destroy()
             return
 
         handler = COMMANDS.get(command)
         if handler is None:
-            self.print_output(f"Ошибка: команда '{command}' не найдена")
+            error = f"команда '{command}' не найдена"
+            self.print_output(f"Ошибка: {error}")
+            self.logger.log(line, error)
             return
 
         result = handler(args)
         self.print_output(result)
+        self.logger.log(line)
