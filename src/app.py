@@ -1,5 +1,6 @@
 """Графическое приложение"""
 
+import argparse
 import getpass
 import socket
 import tkinter as tk
@@ -11,8 +12,10 @@ from src.parser import parse_command
 
 class ShellApp:
 
-    def __init__(self, root: tk.Tk) -> None:
+    def __init__(self, root: tk.Tk, args: argparse.Namespace) -> None:
+
         self.root = root
+        self.args = args
 
         username = getpass.getuser()
         hostname = socket.gethostname()
@@ -41,7 +44,7 @@ class ShellApp:
         self.output.configure(state=tk.DISABLED)
 
     def on_enter(self, event: tk.Event) -> None:
-        """Enter"""
+        """Обрабатывает нажатие Enter в поле ввода"""
         line = self.entry.get()
         self.entry.delete(0, tk.END)
 
