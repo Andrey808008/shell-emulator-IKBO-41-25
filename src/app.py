@@ -6,9 +6,10 @@ import socket
 import tkinter as tk
 from tkinter import scrolledtext
 
+from src.script_runner import ScriptRunner
 from src.commands import COMMANDS
-from src.parser import parse_command
 from src.logger import Logger
+from src.parser import parse_command
 
 
 class ShellApp:
@@ -18,6 +19,7 @@ class ShellApp:
         self.root = root
         self.args = args
         self.logger = Logger(args.log)
+        self.script_runner = ScriptRunner(self.logger)
 
         username = getpass.getuser()
         hostname = socket.gethostname()

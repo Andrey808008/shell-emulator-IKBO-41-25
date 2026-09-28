@@ -1,4 +1,4 @@
-"""Точка входа в приложение"""
+"""Точка входа в приложение."""
 
 import tkinter as tk
 
@@ -7,7 +7,7 @@ from src.config import parse_arguments
 
 
 def main() -> None:
-    """Запускает приложение"""
+    """Запускает приложение."""
     args = parse_arguments()
 
     root = tk.Tk()
@@ -17,7 +17,13 @@ def main() -> None:
     app.print_output(f"VFS:    {args.vfs}")
     app.print_output(f"LOG:    {args.log}")
     app.print_output(f"SCRIPT: {args.script}")
-    app.print_output("==================")
+    app.print_output("==================\n")
+
+    if args.script:
+        root.after(
+            100,
+            lambda: app.script_runner.run(args.script, app.print_output),
+        )
 
     root.mainloop()
 
