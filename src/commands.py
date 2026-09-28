@@ -11,7 +11,7 @@ def handle_cd(args: list[str]) -> str:
     return f"Выполнена команда: cd, аргументы: {args}"
 
 
-"""команды"""
+
 COMMANDS = {
     "ls": handle_ls,
     "cd": handle_cd,
