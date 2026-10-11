@@ -19,10 +19,15 @@ def main() -> None:
     app.print_output(f"SCRIPT: {args.script}")
     app.print_output("==================\n")
 
+    if app._vfs_error:
+        app.print_output(f"Ошибка загрузки VFS: {app._vfs_error}\n")
+
     if args.script:
         root.after(
             100,
-            lambda: app.script_runner.run(args.script, app.print_output),
+            lambda: app.script_runner.run(
+                args.script, app.print_output, app.vfs
+            ),
         )
 
     root.mainloop()

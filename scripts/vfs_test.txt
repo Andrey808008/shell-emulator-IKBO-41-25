@@ -1,0 +1,9 @@
+ls
+cd sub
+ls
+cd ..
+ls a.txt
+cd /
+ls
+unknown_command
+ls
