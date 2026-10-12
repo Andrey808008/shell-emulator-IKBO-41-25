@@ -1,7 +1,6 @@
 """Обработчики команд эмулятора."""
 
-from src.vfs import Vfs, VfsDirectory
-
+from src.vfs import Vfs, VfsDirectory, VfsFile
 
 def handle_ls(vfs: Vfs, args: list[str]) -> str:
     """Показывает содержимое текущей директории VFS."""
@@ -41,8 +40,30 @@ def handle_cd(vfs: Vfs, args: list[str]) -> str:
     vfs.current = node
     return ""
 
+def handle_tac(vfs: Vfs, args: list[str]) -> str:
+    """Выводит содержимое файла в обратном порядке строк."""
+    if not args:
+        return "Ошибка: tac требует аргумент"
+    node = vfs.current.children.get(args[0])
+    if not isinstance(node, VfsFile):
+        return f"Ошибка: '{args[0]}' не найден"
+    lines = node.content.decode("utf-8", errors="replace").splitlines()
+    return "\n".join(reversed(lines))
+
+
+def handle_head(vfs: Vfs, args: list[str]) -> str:
+    """Выводит первые 10 строк файла."""
+    if not args:
+        return "Ошибка: head требует аргумент"
+    node = vfs.current.children.get(args[0])
+    if not isinstance(node, VfsFile):
+        return f"Ошибка: '{args[0]}' не найден"
+    lines = node.content.decode("utf-8", errors="replace").splitlines()
+    return "\n".join(lines[:10])
 
 COMMANDS = {
     "ls": handle_ls,
     "cd": handle_cd,
+    "tac": handle_tac,
+    "head": handle_head,
 }

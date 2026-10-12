@@ -1,9 +1,5 @@
 ls
-cd sub
-ls
-cd ..
-ls a.txt
-cd /
-ls
-unknown_command
-ls
+head a.txt
+tac a.txt
+unknown_cmd
+head missing.txt
