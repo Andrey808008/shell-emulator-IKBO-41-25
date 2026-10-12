@@ -3,39 +3,78 @@
 from src.vfs import Vfs, VfsDirectory, VfsFile
 
 def handle_ls(vfs: Vfs, args: list[str]) -> str:
-    """Показывает содержимое текущей директории VFS."""
-    if args:
-        name = args[0]
-        if name in vfs.current.children:
-            node = vfs.current.children[name]
-            if isinstance(node, VfsDirectory):
-                items = sorted(node.children.keys())
-                return "  ".join(items) if items else "(пусто)"
-            return name
-        return f"Ошибка: '{name}' не найдено"
+    """Показывает содержимое текущей директории с учётом флагов -l, -a, -h."""
+    show_hidden = False
+    long_format = False
+    human = False
 
-    items = sorted(vfs.current.children.keys())
-    return "  ".join(items) if items else "(пусто)"
+    for arg in args:
+        if arg.startswith("-") and len(arg) > 1:
+            for ch in arg[1:]:
+                if ch == "a":
+                    show_hidden = True
+                elif ch == "l":
+                    long_format = True
+                elif ch == "h":
+                    human = True
+
+    items = sorted(vfs.current.children.items())
+
+    if not show_hidden:
+        items = [(n, node) for n, node in items if not n.startswith(".")]
+
+    if not items:
+        return "(пусто)"
+
+    if not long_format:
+        return "  ".join(name for name, _ in items)
+
+    lines = []
+    for name, node in items:
+        is_dir = isinstance(node, VfsDirectory)
+        kind = "d" if is_dir else "-"
+        mode = getattr(node, "mode", "644")
+        if is_dir:
+            size = "-"
+        else:
+            size = _format_size(len(node.content), human)
+        lines.append(f"{kind}{mode}  {size:>8}  {name}")
+    return "\n".join(lines)
+
+
+def _format_size(size: int, human: bool) -> str:
+    """Форматирует размер файла."""
+    if not human:
+        return str(size)
+    if size < 1024:
+        return f"{size}B"
+    if size < 1024 * 1024:
+        return f"{size // 1024}K"
+    return f"{size // (1024 * 1024)}M"
 
 
 def handle_cd(vfs: Vfs, args: list[str]) -> str:
-    """Меняет текущую директорию VFS."""
+    """Меняет текущую директорию, поддерживая пути через /, . и .."""
     if not args:
         return "Ошибка: cd требует аргумент"
 
-    target = args[0]
+    path = args[0]
 
-    if target == "/":
-        vfs.current = vfs.root
-        return ""
+    if path.startswith("/"):
+        node = vfs.root
+    else:
+        node = vfs.current
 
-    if target == "..":
-        vfs.current = vfs._parent_of(vfs.current)
-        return ""
-
-    node = vfs.current.children.get(target)
-    if node is None or not isinstance(node, VfsDirectory):
-        return f"Ошибка: '{target}' не найдено"
+    for segment in path.split("/"):
+        if segment in ("", "."):
+            continue
+        if segment == "..":
+            node = vfs._parent_of(node)
+            continue
+        nxt = node.children.get(segment)
+        if nxt is None or not isinstance(nxt, VfsDirectory):
+            return f"Ошибка: '{segment}' не найдено"
+        node = nxt
 
     vfs.current = node
     return ""
