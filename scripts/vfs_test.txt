@@ -1,5 +1,4 @@
 ls
-head a.txt
-tac a.txt
-unknown_cmd
-head missing.txt
+chmod 755 a.txt
+mv a.txt renamed.txt
+ls

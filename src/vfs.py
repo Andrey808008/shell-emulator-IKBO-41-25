@@ -9,8 +9,9 @@ class VfsNode:
     """Базовый узел VFS: файл или директория."""
 
     def __init__(self, name: str) -> None:
-        """Сохраняет имя узла."""
+        """Сохраняет имя и права доступа узла."""
         self.name = name
+        self.mode = "644"
 
 
 class VfsFile(VfsNode):

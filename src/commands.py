@@ -61,9 +61,36 @@ def handle_head(vfs: Vfs, args: list[str]) -> str:
     lines = node.content.decode("utf-8", errors="replace").splitlines()
     return "\n".join(lines[:10])
 
+def handle_chmod(vfs: Vfs, args: list[str]) -> str:
+    """Меняет права доступа к файлу (сохраняет в атрибуте)."""
+    if len(args) < 2:
+        return "Ошибка: chmod требует режим и имя файла"
+    mode, name = args[0], args[1]
+    node = vfs.current.children.get(name)
+    if node is None:
+        return f"Ошибка: '{name}' не найден"
+    node.mode = mode
+    return ""
+
+
+def handle_mv(vfs: Vfs, args: list[str]) -> str:
+    """Перемещает или переименовывает файл внутри текущей папки."""
+    if len(args) < 2:
+        return "Ошибка: mv требует источник и назначение"
+    src, dst = args[0], args[1]
+    node = vfs.current.children.get(src)
+    if node is None:
+        return f"Ошибка: '{src}' не найден"
+    del vfs.current.children[src]
+    node.name = dst
+    vfs.current.children[dst] = node
+    return ""
+
 COMMANDS = {
     "ls": handle_ls,
     "cd": handle_cd,
     "tac": handle_tac,
     "head": handle_head,
+    "chmod": handle_chmod,
+    "mv": handle_mv,
 }
