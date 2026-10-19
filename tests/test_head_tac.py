@@ -2,6 +2,7 @@
 
 import io
 import zipfile
+MAX_LINES = 10
 
 from src.commands import handle_head, handle_tac, MAX_HEAD_LINES
 from src.vfs import Vfs
@@ -33,7 +34,7 @@ def test_head_limits_to_ten_lines():
     content = "\n".join(str(i) for i in range(20))
     vfs = _vfs_with_file(content)
     result = handle_head(vfs, ["file.txt"])
-    assert len(result.splitlines()) == MAX_HEAD_LINES
+    assert len(result.splitlines()) == MAX_LINES
 
 
 def test_tac_reverses_lines():
