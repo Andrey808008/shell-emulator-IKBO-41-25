@@ -1,14 +1,14 @@
 """Тесты для команд head и tac."""
 
+import io
 import zipfile
 
-from src.commands import handle_head, handle_tac
+from src.commands import handle_head, handle_tac, MAX_HEAD_LINES
 from src.vfs import Vfs
 
 
 def _vfs_with_file(content: str) -> Vfs:
     """Готовит VFS с одним файлом file.txt."""
-    import io
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w") as zf:
         zf.writestr("file.txt", content)
@@ -33,7 +33,7 @@ def test_head_limits_to_ten_lines():
     content = "\n".join(str(i) for i in range(20))
     vfs = _vfs_with_file(content)
     result = handle_head(vfs, ["file.txt"])
-    assert len(result.splitlines()) == 10
+    assert len(result.splitlines()) == MAX_HEAD_LINES
 
 
 def test_tac_reverses_lines():
