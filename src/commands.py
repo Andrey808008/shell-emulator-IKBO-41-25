@@ -2,7 +2,7 @@
 
 from src.vfs import Vfs, VfsDirectory, VfsFile
 
-# Константы (убирают магические числа)
+MIN_ARGS = 2
 MAX_HEAD_LINES = 10
 BYTES_IN_KB = 1024
 BYTES_IN_MB = 1024 * 1024
@@ -111,7 +111,7 @@ def handle_head(vfs: Vfs, args: list[str]) -> str:
 
 def handle_chmod(vfs: Vfs, args: list[str]) -> str:
     """Меняет права доступа к файлу."""
-    if len(args) < 2:
+    if len(args) < MIN_ARGS:
         return "Ошибка: chmod требует режим и имя файла"
     mode, name = args[0], args[1]
     node = vfs.current.children.get(name)
@@ -123,7 +123,7 @@ def handle_chmod(vfs: Vfs, args: list[str]) -> str:
 
 def handle_mv(vfs: Vfs, args: list[str]) -> str:
     """Перемещает или переименовывает файл."""
-    if len(args) < 2:
+    if len(args) < MIN_ARGS:
         return "Ошибка: mv требует источник и назначение"
     src, dst = args[0], args[1]
     node = vfs.current.children.get(src)
